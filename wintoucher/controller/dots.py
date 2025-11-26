@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Iterable, List, Optional, Type
 
-from wintoucher.data.dot import Dot, FlickDot, PressDot
-from wintoucher.gui.dot import DotView, FlickDotView, PressDotView
+from wintoucher.data.dot import CursorDot, Dot, FlickDot, PressDot
+from wintoucher.gui.dot import CursorDotView, DotView, FlickDotView, PressDotView
 from wintoucher.util.key import Key
 
 
@@ -18,13 +18,15 @@ class Dots:
     _current_viewed_dot: Optional[Dot] = None
 
     TYPES: ClassVar[Dict[str, Type[Dot]]] = {
-        "Press": PressDot,
+        "Fixed Position Press": PressDot,
         "Flick": FlickDot,
+        "Mouse Position Press": CursorDot,
     }
 
     VIEW_TYPES: ClassVar[Dict[Type[Dot], Type[DotView]]] = {
         PressDot: PressDotView,
         FlickDot: FlickDotView,
+        CursorDot: CursorDotView,
     }
 
     @property

@@ -7,7 +7,7 @@ from threading import Thread
 from tkinter import ttk
 from typing import Callable, ClassVar
 
-from wintoucher.data.dot import Dot, FlickDot
+from wintoucher.data.dot import CursorDot, Dot, FlickDot
 from wintoucher.gui.tkutils import DetailDict
 from wintoucher.util.key import key_to_str
 from wintoucher.util.touch import TouchManager
@@ -222,3 +222,51 @@ class FlickDotView(DotView):
         """
 
         self.running = False
+
+
+@dataclass
+class CursorDotView(DotView):
+    """
+    A view class for a CursorDot.
+    """
+
+    dot: CursorDot
+    COLOR: ClassVar[str] = "cyan"
+
+    def draw(self, canvas: tk.Canvas, outlined: bool):
+        """
+        Draw the cursor dot on the canvas with a crosshair indicator.
+        """
+        # Draw crosshair to indicate cursor mode
+        crosshair_size = 15
+        canvas.create_line(
+            self.dot.x - crosshair_size,
+            self.dot.y,
+            self.dot.x + crosshair_size,
+            self.dot.y,
+            fill=self.color,
+            width=2,
+        )
+        canvas.create_line(
+            self.dot.x,
+            self.dot.y - crosshair_size,
+            self.dot.x,
+            self.dot.y + crosshair_size,
+            fill=self.color,
+            width=2,
+        )
+
+        # Draw the dot
+        super().draw(canvas, outlined)
+
+    def detail(self, draw_dots: Callable[[], None]) -> DetailDict:
+        """
+        Get the detail view for the cursor dot.
+        """
+        return {
+            **super().detail(draw_dots),
+            "Info": {
+                "widget_type": ttk.Label,
+                "params": {"text": "Touch at cursor position"},
+            },
+        }

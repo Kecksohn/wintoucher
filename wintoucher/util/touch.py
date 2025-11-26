@@ -8,6 +8,7 @@ from ctypes import (
     c_int32,
     c_uint32,
     c_uint64,
+    pointer,
     windll,
 )
 from ctypes.wintypes import DWORD, HANDLE, HWND, POINT, RECT
@@ -63,6 +64,18 @@ FINGER_RADIUS = 20
 ORIENTATION = 90
 PRESSURE = 32000
 DELAY = 0.05
+
+
+def get_cursor_position() -> tuple[int, int]:
+    """
+    Get the current cursor position.
+
+    Returns:
+        tuple[int, int]: The x and y coordinates of the cursor.
+    """
+    point = POINT()
+    windll.user32.GetCursorPos(pointer(point))
+    return point.x, point.y
 
 
 def structure(cls: Type):

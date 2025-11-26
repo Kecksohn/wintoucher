@@ -48,3 +48,17 @@ class FlickDot(Dot):
     @classmethod
     def __json__(cls):
         return (*super().__json__(), "angle", "distance")
+
+
+@dataclass
+class CursorDot(Dot):
+    """
+    A touch dot that represents a press at the current cursor position.
+    The stored x, y coordinates serve as a visual placeholder in the overlay.
+    """
+
+    is_cursor: bool = True
+
+    @classmethod
+    def __json__(cls):
+        return (*super().__json__(), "is_cursor")

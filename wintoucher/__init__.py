@@ -9,7 +9,7 @@ from pynput.keyboard import Key as SpecialKey
 from pynput.keyboard import KeyCode, Listener
 
 from wintoucher.controller.dots import Dots
-from wintoucher.data.dot import FlickDot, PressDot
+from wintoucher.data.dot import CursorDot, FlickDot, PressDot
 from wintoucher.gui.dot import FlickDotView
 from wintoucher.gui.overlay import Overlay
 from wintoucher.gui.tkutils import (
@@ -23,7 +23,7 @@ from wintoucher.gui.tkutils import (
 from wintoucher.gui.tray import TrayIcon
 from wintoucher.util.json import JSONSerializableManager
 from wintoucher.util.key import Key, is_special_key, is_valid_key
-from wintoucher.util.touch import MAX_TOUCHES, TouchError, TouchManager
+from wintoucher.util.touch import MAX_TOUCHES, TouchError, TouchManager, get_cursor_position
 
 
 class WintoucherApp:
@@ -82,6 +82,7 @@ class WintoucherApp:
         json_manager.register(Dots)
         json_manager.register(PressDot)
         json_manager.register(FlickDot)
+        json_manager.register(CursorDot)
         json_manager.register_special(SpecialKey, ("name",))
         json_manager.add_decoder(SpecialKey, lambda obj: SpecialKey[obj["name"]])
         json_manager.register_special(KeyCode, ("vk", "char", "is_dead"))
@@ -282,6 +283,9 @@ class WintoucherApp:
                     for dot in self.dots.get_dots_by_key(key):
                         if isinstance(dot, PressDot):
                             self.touch_manager.press(dot.id, dot.x, dot.y)
+                        elif isinstance(dot, CursorDot):
+                            cursor_x, cursor_y = get_cursor_position()
+                            self.touch_manager.press(dot.id, cursor_x, cursor_y)
                         elif isinstance(dot, FlickDot):
                             view = self.dots.get_view_by_dot(dot)
                             assert isinstance(view, FlickDotView)
